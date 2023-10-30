@@ -3,6 +3,9 @@
     <router-link :to='{name: "demo"}'>
       demo1
     </router-link>
+    <router-link :to='{name: "ipc"}'>
+      ipc
+    </router-link>
   </div>
 </template>
 
