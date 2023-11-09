@@ -7,6 +7,10 @@ const router = createRouter({
   routes: [
     {
       path: '/',
+      redirect: '/product-management'
+    },
+    {
+      path: '/',
       component: () => import('@/components/layout/index.vue'),
       children: autoRoutes
     }

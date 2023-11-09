@@ -1,21 +1,26 @@
-import { app, shell, BrowserWindow } from 'electron';
+import { app, shell, BrowserWindow, screen } from 'electron';
 import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
 import controllersMain from './controllers';
 
 function createWindow(): void {
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const { width, height } = primaryDisplay.workAreaSize;
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
+    width,
+    height,
+    minWidth: 800,
+    minHeight: 600,
     show: false,
-    autoHideMenuBar: true,
+    title: '项目运行管理',
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
-    }
+    },
+    simpleFullscreen: true
   });
 
   mainWindow.on('ready-to-show', () => {
@@ -39,7 +44,7 @@ function createWindow(): void {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron');
 
@@ -49,7 +54,7 @@ app.whenReady().then(() => {
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window);
   });
-  controllersMain();
+  await controllersMain();
   createWindow();
 
   app.on('activate', function () {
