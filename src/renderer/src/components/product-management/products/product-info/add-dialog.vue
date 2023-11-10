@@ -22,18 +22,20 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import BizForm from './form.vue';
-import { useProducts } from '@/state/product-management/products';
+import api from '@/services/api';
 
 const visible = ref(false);
 const showBody = ref(false);
 
 const bizFormRef = ref();
-const { addProduct } = useProducts();
+
+const emit = defineEmits(['success']);
 
 const onSubmit = async () => {
-  const data = await bizFormRef.value.getData();
-  addProduct(data);
+  const data:{ name: string } = await bizFormRef.value.getData();
+  await api.product.addProduct({ name: data.name });
   visible.value = false;
+  emit('success');
 };
 
 const show = () => {

@@ -6,7 +6,7 @@
     <div class='btn-group'>
       <el-button :icon='Plus' link @click='onAdd' />
     </div>
-    <product-add ref='productAddRef' />
+    <product-add ref='productAddRef' @success='onAddSuccess' />
   </div>
 </template>
 
@@ -17,8 +17,14 @@ import { ref } from 'vue';
 
 const productAddRef = ref();
 
+const emit = defineEmits(['add-success']);
+
 const onAdd = () => {
   productAddRef.value.show();
+};
+
+const onAddSuccess = () => {
+  emit('add-success');
 };
 
 </script>

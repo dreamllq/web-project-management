@@ -8,9 +8,16 @@
 
 <script setup lang="ts">
 import { cloneDeep } from 'lodash';
-import { reactive, ref } from 'vue';
+import { PropType, reactive, ref } from 'vue';
 
-const form = reactive({ name: '' });
+const props = defineProps({
+  defaultData: {
+    type: Object as PropType<{ name: string }>,
+    default: () => ({ name: '' }) 
+  } 
+});
+
+const form = reactive({ name: props.defaultData.name });
 const formRef = ref();
 
 const getData = async () => {

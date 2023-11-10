@@ -1,17 +1,24 @@
 <template>
   <div class='products'>
     <div class='header-wrapper'>
-      <products-header />
+      <products-header @add-success='onAddSuccess' />
     </div>
     <div class='product-list-wrapper'>
-      <product-list />
+      <product-list ref='productListRef' />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
 import ProductsHeader from './header/index.vue';
 import ProductList from './product-list/index.vue';
+
+const productListRef = ref();
+
+const onAddSuccess = () => {
+  productListRef.value.refresh();
+};
 
 </script>
 

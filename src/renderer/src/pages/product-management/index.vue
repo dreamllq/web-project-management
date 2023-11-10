@@ -1,21 +1,21 @@
 <template>
-  <div class='project-management-wrapper'>
-    <div class='projects-wrapper'>
+  <div class='products-management-wrapper'>
+    <div class='products-wrapper'>
       <products />
     </div>
-    <div class='terminal-wrapper'>
-      2
+    <div class='project-wrapper'>
+      <projects />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import Products from '@/components/product-management/products/index.vue';
-
+import Projects from '@/components/product-management/projects/index.vue';
 </script>
 
 <style scoped lang="scss">
-.project-management-wrapper{
+.products-management-wrapper{
   position: fixed;
   top: 0;
   left:0;
@@ -24,7 +24,7 @@ import Products from '@/components/product-management/products/index.vue';
   display: flex;
   overflow: hidden;
 
-  .projects-wrapper{
+  .products-wrapper{
     width: 300px;
     flex: none;
     height: 100%;
@@ -32,7 +32,7 @@ import Products from '@/components/product-management/products/index.vue';
     border-right: 1px solid var(--el-border-color);
   }
 
-  .terminal-wrapper{
+  .project-wrapper{
     flex: 1;
     height: 100%;
   }
