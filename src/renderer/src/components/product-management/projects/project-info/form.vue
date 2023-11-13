@@ -23,7 +23,7 @@ const props = defineProps({
   } 
 });
 
-const { selectProjectId } = useProductManagement();
+const { selectedProductId } = useProductManagement();
 
 const form = reactive({
   name: props.defaultData.name,
@@ -35,7 +35,7 @@ const getData = async () => {
   await formRef.value.validate();
   return {
     ...form,
-    productId: selectProjectId.value!
+    productId: selectedProductId.value!
   };
 };
 

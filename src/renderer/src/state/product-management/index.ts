@@ -2,7 +2,7 @@ import { ref } from 'vue';
 import { createGlobalState } from '@vueuse/core';
 
 export const useProductManagement = createGlobalState(() => {
-  const selectProjectId = ref<string | null>();
+  const selectedProductId = ref<string | null>();
 
-  return { selectProjectId };
+  return { selectedProductId };
 });

@@ -37,4 +37,11 @@ export default () => {
     response.success(d);
     return response;
   });
+
+  ipcMain.handle('/patch/product/dir', async (_, data) => {
+    const d = await ProductEntity.getInstance().updateDir(data);
+    const response = new IpcResponse();
+    response.success(d);
+    return response;
+  });
 };

@@ -1,5 +1,5 @@
 <template>
-  <div class='product-item' :class='{selected: selectProjectId === product.id}' @click='onSelect'>
+  <div class='product-item' :class='{selected: selectedProductId === product.id}' @click='onSelect'>
     <div class='product-item__info'>
       <span>{{ product.name }}</span>
     </div>
@@ -40,14 +40,14 @@ const props = defineProps({
   }
 });
 
-const { selectProjectId } = useProductManagement();
+const { selectedProductId } = useProductManagement();
 
 const editProductInfoDialogRef = ref();
 
 const emit = defineEmits(['edit-success', 'delete-success']);
 
 const onSelect = () => {
-  selectProjectId.value = props.product.id;
+  selectedProductId.value = props.product.id;
 };
 
 const handleCommand = (command: 'edit' | 'delete') => {

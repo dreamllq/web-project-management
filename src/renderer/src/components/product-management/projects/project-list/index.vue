@@ -46,10 +46,10 @@ import ProjectEditDialog from '../project-info/edit-dialog.vue';
 const pagination = ref<InstanceType<typeof AutoPagination>>();
 const projectEditDialogRef = ref<InstanceType<typeof ProjectEditDialog>>();
 
-const { selectProjectId } = useProductManagement();
+const { selectedProductId } = useProductManagement();
 
 const fetchData = async () => {
-  const list = await api.project.getProjects({ productId: selectProjectId.value! });
+  const list = await api.project.getProjects({ productId: selectedProductId.value! });
   return {
     list,
     total: 0 

@@ -1,11 +1,11 @@
 <template>
-  <template v-if='selectProjectId'>
+  <template v-if='selectedProductId && renderListFlag'>
     <div class='projects-inner'>
       <div class='projects-header-wrapper'>
         <project-header @add-success='onAddSuccess' />
       </div>
       <div class='project-list-wrapper'>
-        <project-list v-if='renderListFlag' ref='projectListRef' />
+        <project-list ref='projectListRef' />
       </div>
     </div>
   </template>
@@ -20,11 +20,11 @@ import ProjectHeader from './header/index.vue';
 import ProjectList from './project-list/index.vue';
 import { useProductManagement } from '@/state/product-management';
 
-const { selectProjectId } = useProductManagement();
+const { selectedProductId } = useProductManagement();
 const renderListFlag = ref(true);
 const projectListRef = ref();
 
-watch(() => selectProjectId.value, async () => {
+watch(() => selectedProductId.value, async () => {
   renderListFlag.value = false;
   await nextTick();
   renderListFlag.value = true;

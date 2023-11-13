@@ -64,4 +64,12 @@ export class ProductEntity {
       await this._storage.set(this._products);
     }
   }
+
+  async updateDir(product:{ id: string; dir: string }) {
+    const index = this._products.findIndex(item => item.id === product.id);
+    if (index > -1) {
+      this._products[index].dir = product.dir;
+      await this._storage.set(this._products);
+    }
+  }
 }
