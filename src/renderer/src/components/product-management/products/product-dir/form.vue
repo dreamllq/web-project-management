@@ -4,9 +4,11 @@
       <div style='word-break: break-all;'>
         <span>{{ form.dir }}</span>
       </div>
-      <el-button @click='onSelectFolder'>
-        选择目录
-      </el-button>
+      <div>
+        <el-button @click='onSelectFolder'>
+          选择目录
+        </el-button>
+      </div>
     </el-form-item>
   </el-form>
 </template>

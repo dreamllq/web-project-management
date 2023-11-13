@@ -7,7 +7,7 @@ export default () => {
       title: '文件夹选择',
       defaultPath: '',
       buttonLabel: '确认',
-      properties: ['openDirectory']
+      properties: ['openDirectory', 'createDirectory']
     });
     const response = new IpcResponse();
     if (Array.isArray(d) && d.length === 1) {

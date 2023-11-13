@@ -23,6 +23,11 @@
                   link
                   type='danger'
                   @click='onDelete(row)' />
+                <el-button
+                  :icon='Download'
+                  link
+                  type='primary'
+                  @click='onClone(row)' />
               </template>
             </el-table-column>
           </el-table>
@@ -39,7 +44,7 @@ import { AutoHeightWrapper } from 'lc-vue-auto-height-wrapper';
 import { ref } from 'vue';
 import api from '@/services/api';
 import { useProductManagement } from '@/state/product-management';
-import { Edit, Delete } from '@element-plus/icons-vue';
+import { Edit, Delete, Download } from '@element-plus/icons-vue';
 import { ElMessageBox } from 'element-plus';
 import ProjectEditDialog from '../project-info/edit-dialog.vue';
 
@@ -68,6 +73,10 @@ const onDelete = async (row: { id: string }) => {
   await ElMessageBox.confirm('确认删除此项目吗？', '确认');
   await api.project.deleteProject({ id: row.id });
   pagination.value!.refresh();
+};
+
+const onClone = async (row: { id: string }) => {
+  
 };
 
 const onEditSuccess = () => {
