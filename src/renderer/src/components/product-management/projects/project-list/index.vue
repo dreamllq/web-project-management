@@ -50,7 +50,10 @@ const { selectProjectId } = useProductManagement();
 
 const fetchData = async () => {
   const list = await api.project.getProjects({ productId: selectProjectId.value! });
-  return { list };
+  return {
+    list,
+    total: 0 
+  };
 };
 
 const refresh = () => {
