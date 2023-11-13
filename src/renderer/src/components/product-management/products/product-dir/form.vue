@@ -1,13 +1,13 @@
 <template>
   <el-form ref='formRef' label-position='top' :model='form'>
     <el-form-item label='开发目录' prop='dir'>
-      <div style='word-break: break-all;'>
-        <span>{{ form.dir }}</span>
-      </div>
       <div>
         <el-button @click='onSelectFolder'>
           选择目录
         </el-button>
+      </div>
+      <div style='word-break: break-all;'>
+        <span>{{ form.dir }}</span>
       </div>
     </el-form-item>
   </el-form>
