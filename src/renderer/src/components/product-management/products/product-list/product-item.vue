@@ -72,7 +72,7 @@ const onEdit = () => {
 
 const onDelete = async () => {
   console.log('delete');
-  await ElMessageBox.confirm('确认删除此项目吗？', '确认');
+  await ElMessageBox.confirm('确认删除此产品吗？', '确认');
   await api.product.deleteProduct({ id: props.product.id });
   emit('delete-success');
 };

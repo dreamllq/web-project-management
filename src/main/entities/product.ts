@@ -36,6 +36,8 @@ export class ProductEntity {
     const index = this._products.findIndex(item => item.id === id);
     if (index > -1) {
       return this._products[index];
+    } else {
+      return undefined;
     }
   }
 

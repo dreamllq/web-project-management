@@ -4,8 +4,3 @@ export type Project = {
   gitCloneUrl: string;
   productId: string;
 };
-
-export type Product = {
-  id: string;
-  name: string;
-};

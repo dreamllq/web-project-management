@@ -5,7 +5,9 @@ export default async (url: string, body?: Record<string, any>) => {
     data: any;
     msg: string;
   } = await window.electron.ipcRenderer.invoke(url, body);
-
+  
+  console.log('ipc', url, body, res);
+  
   if (res.status === 0) {
     return res.data;
   } else {
