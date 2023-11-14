@@ -3,6 +3,7 @@ import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
 import controllersMain from './controllers';
+import mainWindowService from './services/main-window';
 
 function createWindow(): void {
   const primaryDisplay = screen.getPrimaryDisplay();
@@ -22,6 +23,8 @@ function createWindow(): void {
     },
     simpleFullscreen: true
   });
+
+  mainWindowService.set(mainWindow);
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show();

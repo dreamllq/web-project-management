@@ -35,6 +35,7 @@ import Projects from '@/components/product-management/projects/index.vue';
   .project-wrapper{
     flex: 1;
     height: 100%;
+    overflow: hidden;
   }
 }
 </style>

@@ -47,11 +47,14 @@ import { useProductManagement } from '@/state/product-management';
 import { Edit, Delete, Download } from '@element-plus/icons-vue';
 import { ElMessageBox } from 'element-plus';
 import ProjectEditDialog from '../project-info/edit-dialog.vue';
+import { useRouter } from 'vue-router';
 
 const pagination = ref<InstanceType<typeof AutoPagination>>();
 const projectEditDialogRef = ref<InstanceType<typeof ProjectEditDialog>>();
 
 const { selectedProductId } = useProductManagement();
+
+const router = useRouter();
 
 const fetchData = async () => {
   const list = await api.project.getProjects({ productId: selectedProductId.value! });
@@ -76,7 +79,12 @@ const onDelete = async (row: { id: string }) => {
 };
 
 const onClone = async (row: { id: string }) => {
-  
+  await ElMessageBox.confirm('确认克隆此项目吗？', '确认');
+  const res = await api.project.cloneProject({ id: row.id });
+  router.push({
+    name: 'task-terminal',
+    query: { id: res.taskId } 
+  });
 };
 
 const onEditSuccess = () => {

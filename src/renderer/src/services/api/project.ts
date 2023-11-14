@@ -6,3 +6,4 @@ export const getProject = async (data: { id: string }):Promise<Project> => await
 export const addProject = async (data: { name: string; productId: string; gitCloneUrl: string }) => await ipcRequest('/post/project', data);
 export const deleteProject = async (data: { id: string }) => await ipcRequest('/delete/project', data);
 export const updateProject = async (data: { id: string; name: string; gitCloneUrl: string; productId: string }) => await ipcRequest('/put/project', data);
+export const cloneProject = async (data: { id: string }):Promise<any> => await ipcRequest('/clone/project', data);

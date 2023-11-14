@@ -10,7 +10,15 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from 'vue';
 import LMenu from './menu/index.vue';
+import { useTaskTerminal } from '@/state/product-management/task-terminal';
+
+const { start } = useTaskTerminal();
+
+onMounted(() => {
+  start();
+});
 </script>
 
 <style scoped lang="scss">
