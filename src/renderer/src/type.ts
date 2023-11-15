@@ -3,6 +3,7 @@ export type Project = {
   name: string;
   gitCloneUrl: string;
   productId: string;
+  hasCloned: boolean;
 };
 
 export type Product = {

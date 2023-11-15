@@ -42,11 +42,15 @@ export class ProjectEntity {
   }
 
   async add(project: { name: string; gitCloneUrl: string; productId: string }) {
+    const urlArr = project.gitCloneUrl.split('/');
+    const gitName = urlArr[urlArr.length - 1].replace(/(.*)\.+.*/g, '$1');
+
     this._projects.push({
       id: uuidv4(),
       name: project.name,
       gitCloneUrl: project.gitCloneUrl,
-      productId: project.productId
+      productId: project.productId,
+      folderName: `${project.name}(${gitName})`
     });
     await this._storage.set(this._projects);
   }

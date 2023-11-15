@@ -24,6 +24,7 @@
                   type='danger'
                   @click='onDelete(row)' />
                 <el-button
+                  v-if='!row.hasCloned'
                   :icon='Download'
                   link
                   type='primary'

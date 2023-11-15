@@ -1,3 +1,5 @@
+import { ElMessage } from 'element-plus';
+
 export default async (url: string, body?: Record<string, any>) => {
   const res:{
     status: number;
@@ -11,6 +13,7 @@ export default async (url: string, body?: Record<string, any>) => {
   if (res.status === 0) {
     return res.data;
   } else {
+    ElMessage.error(res.msg);
     const e = new Error(res.msg);
     e.code = res.status;
     throw e;

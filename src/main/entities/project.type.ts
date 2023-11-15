@@ -3,4 +3,5 @@ export type Project = {
   name: string;
   gitCloneUrl: string;
   productId: string;
+  folderName: string;
 };

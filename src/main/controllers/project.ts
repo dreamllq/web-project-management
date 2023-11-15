@@ -3,12 +3,24 @@ import { ProjectEntity } from '../entities/project';
 import { IpcResponse } from '../services/ipc-response';
 import { ProductEntity } from '../entities/product';
 import { Queue } from '../services/queue';
+import fs from 'fs';
 
 export default () => {
   ipcMain.handle('/get/projects', async (_, data) => {
     const d = await ProjectEntity.getInstance().getAll({ productId: data.productId });
+    const product = await ProductEntity.getInstance().getOne(data.productId);
+
+    const projects = d.map(project => {
+      const folderPath = `${product!.dir!}/${project!.folderName}`;
+      const hasCloned = fs.existsSync(folderPath);
+      return {
+        ...project,
+        hasCloned
+      };
+    });
+
     const response = new IpcResponse();
-    response.success(d);
+    response.success(projects);
     return response;
   });
 
@@ -43,12 +55,28 @@ export default () => {
   ipcMain.handle('/clone/project', async (_, data:{ id: string }) => {
     const project = await ProjectEntity.getInstance().getOne(data.id);
     const product = await ProductEntity.getInstance().getOne(project!.productId);
+  
+    const folderPath = `${product!.dir!}/${project!.folderName}`;
+    const hasCloned = fs.existsSync(folderPath);
 
-    const task = Queue.getInstance().generateShellTask({ name: `克隆：${project?.name}` });
-    task.exec('git', ['clone', project!.gitCloneUrl], { cwd: product!.dir! });
+    if (hasCloned !== true) {
+      const task = Queue.getInstance().generateShellTask({
+        name: `克隆：${project?.name}`,
+        meta: { projectId: project!.id } 
+      });
+      task.exec('git', [
+        'clone',
+        project!.gitCloneUrl,
+        project!.folderName
+      ], { cwd: product!.dir! });
 
-    const response = new IpcResponse();
-    response.success({ taskId: task.id });
-    return response;
+      const response = new IpcResponse();
+      response.success({ taskId: task.id });
+      return response;
+    } else {
+      const response = new IpcResponse();
+      response.error(1101, '项目已克隆');
+      return response;
+    }
   });
 };
