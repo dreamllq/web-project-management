@@ -7,3 +7,7 @@ export const addProject = async (data: { name: string; productId: string; gitClo
 export const deleteProject = async (data: { id: string }) => await ipcRequest('/delete/project', data);
 export const updateProject = async (data: { id: string; name: string; gitCloneUrl: string; productId: string }) => await ipcRequest('/put/project', data);
 export const cloneProject = async (data: { id: string }):Promise<any> => await ipcRequest('/clone/project', data);
+export const openFolderProject = async (data: { id: string }):Promise<any> => await ipcRequest('/open-folder/project', data);
+export const openVscodeProject = async (data: { id: string }):Promise<any> => await ipcRequest('/open-vscode/project', data);
+
+

@@ -1,0 +1,16 @@
+{
+  "id": "4331983",
+  "name": "product-management-app",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "13304144",
+      "name": "vscode",
+      "font_class": "vscode",
+      "unicode": "e6b8",
+      "unicode_decimal": 59064
+    }
+  ]
+}

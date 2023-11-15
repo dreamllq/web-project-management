@@ -10,7 +10,7 @@
           <el-table :data='data' border :height='size.height'>
             <el-table-column type='index' :index='indexMethod' />
             <el-table-column prop='name' label='项目名' />
-            <el-table-column prop='gitCloneUrl' label='git克隆地址' />
+            <el-table-column prop='gitCloneUrl' label='git克隆地址' show-overflow-tooltip />
             <el-table-column label='操作'>
               <template #default='{row}'>
                 <el-button
@@ -29,6 +29,19 @@
                   link
                   type='primary'
                   @click='onClone(row)' />
+                <el-button
+                  v-if='row.hasCloned'
+                  :icon='FolderOpened'
+                  link
+                  type='primary'
+                  @click='onFolderOpened(row)' />
+                <el-button
+                  v-if='row.hasCloned'
+                  link
+                  type='primary'
+                  @click='onVscodeOpened(row)'>
+                  <i class='iconfont icon-vscode' />
+                </el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -45,7 +58,7 @@ import { AutoHeightWrapper } from 'lc-vue-auto-height-wrapper';
 import { ref } from 'vue';
 import api from '@/services/api';
 import { useProductManagement } from '@/state/product-management';
-import { Edit, Delete, Download } from '@element-plus/icons-vue';
+import { Edit, Delete, Download, FolderOpened } from '@element-plus/icons-vue';
 import { ElMessageBox } from 'element-plus';
 import ProjectEditDialog from '../project-info/edit-dialog.vue';
 import { useRouter } from 'vue-router';
@@ -86,6 +99,14 @@ const onClone = async (row: { id: string }) => {
     name: 'task-terminal',
     query: { id: res.taskId } 
   });
+};
+
+const onFolderOpened = async (row: { id: string }) => {
+  api.project.openFolderProject({ id: row.id });
+};
+
+const onVscodeOpened = async (row: { id: string }) => {
+  api.project.openVscodeProject({ id: row.id });
 };
 
 const onEditSuccess = () => {

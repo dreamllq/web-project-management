@@ -1,8 +1,9 @@
-import { ipcMain } from 'electron';
+import { ipcMain, shell } from 'electron';
 import { ProjectEntity } from '../entities/project';
 import { IpcResponse } from '../services/ipc-response';
 import { ProductEntity } from '../entities/product';
 import { Queue } from '../services/queue';
+import { exec } from 'child_process';
 import fs from 'fs';
 
 export default () => {
@@ -76,6 +77,44 @@ export default () => {
     } else {
       const response = new IpcResponse();
       response.error(1101, '项目已克隆');
+      return response;
+    }
+  });
+
+  ipcMain.handle('/open-folder/project', async (_, data:{ id: string }) => {
+    const project = await ProjectEntity.getInstance().getOne(data.id);
+    const product = await ProductEntity.getInstance().getOne(project!.productId);
+  
+    const folderPath = `${product!.dir!}/${project!.folderName}`;
+    const hasCloned = fs.existsSync(folderPath);
+
+    if (hasCloned) {
+      shell.openPath(folderPath);
+      const response = new IpcResponse();
+      response.success('操作成功');
+      return response;
+    } else {
+      const response = new IpcResponse();
+      response.error(1102, '项目未克隆');
+      return response;
+    }
+  });
+
+  ipcMain.handle('/open-vscode/project', async (_, data:{ id: string }) => {
+    const project = await ProjectEntity.getInstance().getOne(data.id);
+    const product = await ProductEntity.getInstance().getOne(project!.productId);
+  
+    const folderPath = `${product!.dir!}/${project!.folderName}`;
+    const hasCloned = fs.existsSync(folderPath);
+
+    if (hasCloned) {
+      exec('code .', { cwd: folderPath });
+      const response = new IpcResponse();
+      response.success('操作成功');
+      return response;
+    } else {
+      const response = new IpcResponse();
+      response.error(1102, '项目未克隆');
       return response;
     }
   });
