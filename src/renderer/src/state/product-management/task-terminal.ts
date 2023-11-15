@@ -6,6 +6,7 @@ export type TaskNotify = {
   id: string; 
   record: { id: string; data: string }[]; 
   name: string;
+  end: boolean;
 };
 
 export const useTaskTerminal = createGlobalState(() => {
