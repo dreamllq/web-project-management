@@ -55,12 +55,14 @@
                   @click='onVscodeOpened(row)'>
                   <i class='iconfont icon-vscode' />
                 </el-button>
-                <el-button
+                <!-- <el-button
                   v-if='row.hasCloned'
                   :icon='Setting'
                   link
                   type='primary'
-                  @click='onSetting(row)' />
+                  @click='onSetting(row)' /> -->
+                  
+                <scripts-dropdown :row='row' />
               </template>
             </el-table-column>
           </el-table>
@@ -78,23 +80,26 @@ import { AutoHeightWrapper } from 'lc-vue-auto-height-wrapper';
 import { computed, ref, watch } from 'vue';
 import api from '@/services/api';
 import { useProductManagement } from '@/state/product-management';
-import { Edit, Delete, Download, FolderOpened, Loading, Setting } from '@element-plus/icons-vue';
+import { Edit, Delete, Download, FolderOpened, Loading, Setting, VideoPlay } from '@element-plus/icons-vue';
 import { ElMessageBox } from 'element-plus';
 import ProjectEditDialog from '../project-info/edit-dialog.vue';
 import { useRouter } from 'vue-router';
 import { useTaskTerminal } from '@/state/product-management/task-terminal';
 import ProjectSettingDialog from '../project-setting/index.vue';
+import ScriptsDropdown from './scripts-dropdown.vue';
 
 const pagination = ref<InstanceType<typeof AutoPagination>>();
 const projectEditDialogRef = ref<InstanceType<typeof ProjectEditDialog>>();
 const projectSettingDialogRef = ref<InstanceType<typeof ProjectSettingDialog>>();
 
-const taskIdMap = ref<Record<string, string>>({});
+// const taskIdMap = ref<Record<string, string>>({});
 
 const { selectedProductId } = useProductManagement();
 const { taskOutMap } = useTaskTerminal();
 
-const projectStatus = computed(() => Object.keys(taskOutMap.value).map(key => taskOutMap.value[key]).filter(item => item.end !== true).reduce((acc, item) => {
+const runningTaskList = computed(() => Object.keys(taskOutMap.value).map(key => taskOutMap.value[key]).filter(item => item.end !== true));
+
+const projectStatus = computed(() => runningTaskList.value.reduce((acc, item) => {
   acc[item.meta.projectId] = true;
   return acc;
 }, {}));
@@ -129,14 +134,15 @@ const onDelete = async (row: { id: string }) => {
 
 const onClone = async (row: { id: string }) => {
   await ElMessageBox.confirm('确认克隆此项目吗？', '确认');
-  const res = await api.project.cloneProject({ id: row.id });
-  taskIdMap.value[row.id] = res.taskId;
+  await api.project.cloneProject({ id: row.id });
+  // taskIdMap.value[row.id] = res.taskId;
 };
 
 const onJumpTerminal = (row:{ id: string }) => {
+  const task = runningTaskList.value.find(item => item.meta.projectId === row.id);
   router.push({
     name: 'task-terminal',
-    query: { id: taskIdMap.value[row.id] } 
+    query: { id: task!.id } 
   });
 };
 

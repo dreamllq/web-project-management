@@ -85,7 +85,7 @@ export default () => {
     if (hasCloned) {
       shell.openPath(folderPath);
       const response = new IpcResponse();
-      response.success('操作成功');
+      response.success();
       return response;
     } else {
       const response = new IpcResponse();
@@ -104,12 +104,43 @@ export default () => {
     if (hasCloned) {
       exec('code .', { cwd: folderPath });
       const response = new IpcResponse();
-      response.success('操作成功');
+      response.success();
       return response;
     } else {
       const response = new IpcResponse();
       response.error(1102, '项目未克隆');
       return response;
     }
+  });
+
+  ipcMain.handle('/get/project/scripts', async(_, data:{ id: string }) => {
+    const project = await ProjectEntity.getInstance().getOne(data.id);
+    const scripts = await project!.getScripts();
+    const response = new IpcResponse();
+    response.success(scripts);
+    return response;
+  });
+
+  ipcMain.handle('/post/project/script', async(_, data: { id: string; script: {
+    script: string;
+    shell: any;
+    type: 'npm';
+  }; }) => {
+    const project = await ProjectEntity.getInstance().getOne(data.id);
+    const folderPath = await project!.getFolderPath();
+    
+    const task = Queue.getInstance().generateShellTask({
+      name: `【${project?.name}】${data.script.script}-${data.script.type}`,
+      meta: { projectId: project!.id } 
+    });
+
+    if (data.script.type === 'npm') {
+      const npmScripts = ['install'];
+      task.exec('npm', npmScripts.includes(data.script.script) ? [data.script.script] : ['run', data.script.script], { cwd: folderPath });
+    }
+
+    const response = new IpcResponse();
+    response.success({ taskId: task.id });
+    return response;
   });
 };

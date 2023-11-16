@@ -20,6 +20,8 @@ const record = computed(() => selectedTaskId.value ? taskOutMap.value[selectedTa
   padding: 8px;
   font-size: 14px;
   color: var(--el-text-color-regular);
-
+  height: 100%;
+  overflow: auto;
+  box-sizing: border-box;
 }
 </style>

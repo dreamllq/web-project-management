@@ -10,4 +10,19 @@ export const cloneProject = async (data: { id: string }):Promise<any> => await i
 export const openFolderProject = async (data: { id: string }):Promise<any> => await ipcRequest('/open-folder/project', data);
 export const openVscodeProject = async (data: { id: string }):Promise<any> => await ipcRequest('/open-vscode/project', data);
 
+export const getProjectScripts = async (data: { id: string }):Promise<{
+  npm: {
+    script: string;
+    shell: any;
+  }[];
+}> => await ipcRequest('/get/project/scripts', data);
+
+export const runProjectScript = async (data: { id: string; script: { 
+  script: string;
+  shell: any;
+  type: 'npm'; 
+}; }):Promise<any> => await ipcRequest('/post/project/script', data);
+
+
+
 

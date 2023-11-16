@@ -6,7 +6,7 @@ export class ShellTask {
   private _name: string = '';
   private _record: { id: string; data: string }[] = [];
   private _id: string = uuidv4();
-  private _end: boolean = false;
+  private _end: boolean = true;
   private _meta: { projectId: string };
   
   constructor(options:{ name: string; meta: { projectId: string } }) {
@@ -19,6 +19,7 @@ export class ShellTask {
   }
 
   exec(shell: string, args: string[] = [], options: { cwd: string; stdio?: StdioOptions }) {
+    this._end = false;
     return new Promise((resolve, reject) => {
       const d = {
         id: uuidv4(),

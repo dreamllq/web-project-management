@@ -10,7 +10,7 @@
     <template v-if='showBody'>
       <el-tabs v-model='activeName'>
         <el-tab-pane label='脚本设置' name='scriptSetting'>
-          <script-setting />
+          <script-setting :project-id='projectId' />
         </el-tab-pane>
       </el-tabs>
     </template>

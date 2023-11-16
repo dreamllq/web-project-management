@@ -1,5 +1,6 @@
 import { ProductEntity } from '../entities/product';
 import fs from 'fs';
+import path from 'path';
 
 export class Project {
   private _id: string = '';
@@ -52,6 +53,15 @@ export class Project {
     this._productId = val;
   }
 
+  toJSON() {
+    return {
+      id: this.id,
+      name: this.name,
+      gitCloneUrl: this.gitCloneUrl,
+      productId: this.productId
+    };
+  }
+
   async isGitCloned() {
     const folderPath = await this.getFolderPath();
     const hasCloned = fs.existsSync(folderPath);
@@ -60,16 +70,37 @@ export class Project {
 
   async getFolderPath() {
     const product = await ProductEntity.getInstance().getOne(this.productId);
-    const folderPath = `${product!.dir!}/${this.folderName}`;
+    const folderPath = path.join(product!.dir!, this.folderName);
     return folderPath;
   }
 
-  toJSON() {
-    return {
-      id: this.id,
-      name: this.name,
-      gitCloneUrl: this.gitCloneUrl,
-      productId: this.productId
-    };
+  async getScripts() {
+    const npmScripts = await this.getNpmScripts();
+    return { npm: npmScripts };
+  }
+
+  async getNpmScripts() {
+    const folderPath = await this.getFolderPath();
+    const pkgPath = path.join(folderPath, 'package.json');
+    if (!fs.existsSync(pkgPath)) {
+      return [];
+    }
+    const content = fs.readFileSync(pkgPath);
+    try {
+      const pkg = JSON.parse(content.toString());
+      const scripts = Object.keys(pkg.scripts).map(key => ({
+        script: key,
+        shell: pkg.scripts[key]
+      }));
+
+      scripts.unshift({
+        script: 'install',
+        shell: ''
+      });
+
+      return scripts;
+    } catch (e) {
+      return [];
+    }
   }
 }
