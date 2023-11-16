@@ -16,7 +16,7 @@ export class Queue {
     return this._shellQueue.map(task => task.toJSON());
   }
   
-  generateShellTask(options:{ name: string; meta: any }): ShellTask {
+  generateShellTask(options:{ name: string; meta: { projectId: string } }): ShellTask {
     const task = new ShellTask(options);
     this._shellQueue.push(task);
     return task;

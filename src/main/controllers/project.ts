@@ -9,16 +9,14 @@ import fs from 'fs';
 export default () => {
   ipcMain.handle('/get/projects', async (_, data) => {
     const d = await ProjectEntity.getInstance().getAll({ productId: data.productId });
-    const product = await ProductEntity.getInstance().getOne(data.productId);
 
-    const projects = d.map(project => {
-      const folderPath = `${product!.dir!}/${project!.folderName}`;
-      const hasCloned = fs.existsSync(folderPath);
+    const projects = await Promise.all(d.map(async project => {
+      const hasCloned = await project.isGitCloned();
       return {
-        ...project,
+        ...project.toJSON(),
         hasCloned
       };
-    });
+    }));
 
     const response = new IpcResponse();
     response.success(projects);
@@ -28,7 +26,7 @@ export default () => {
   ipcMain.handle('/get/project', async (_, data) => {
     const d = await ProjectEntity.getInstance().getOne(data.id);
     const response = new IpcResponse();
-    response.success(d);
+    response.success(d?.toJSON());
     return response;
   });
 
@@ -56,9 +54,7 @@ export default () => {
   ipcMain.handle('/clone/project', async (_, data:{ id: string }) => {
     const project = await ProjectEntity.getInstance().getOne(data.id);
     const product = await ProductEntity.getInstance().getOne(project!.productId);
-  
-    const folderPath = `${product!.dir!}/${project!.folderName}`;
-    const hasCloned = fs.existsSync(folderPath);
+    const hasCloned = await project!.isGitCloned();
 
     if (hasCloned !== true) {
       const task = Queue.getInstance().generateShellTask({
@@ -85,8 +81,9 @@ export default () => {
     const project = await ProjectEntity.getInstance().getOne(data.id);
     const product = await ProductEntity.getInstance().getOne(project!.productId);
   
-    const folderPath = `${product!.dir!}/${project!.folderName}`;
-    const hasCloned = fs.existsSync(folderPath);
+    const folderPath = await project!.getFolderPath();
+
+    const hasCloned = await project!.isGitCloned();
 
     if (hasCloned) {
       shell.openPath(folderPath);

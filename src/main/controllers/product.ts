@@ -6,14 +6,14 @@ export default () => {
   ipcMain.handle('/get/products', async () => {
     const d = await ProductEntity.getInstance().getAll();
     const response = new IpcResponse();
-    response.success(d);
+    response.success(d.map(item => item.toJSON()));
     return response;
   });
 
   ipcMain.handle('/get/product', async (_, data) => {
     const d = await ProductEntity.getInstance().getOne(data.id);
     const response = new IpcResponse();
-    response.success(d);
+    response.success(d?.toJSON());
     return response;
   });
 

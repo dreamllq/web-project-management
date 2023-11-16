@@ -7,9 +7,9 @@ export class ShellTask {
   private _record: { id: string; data: string }[] = [];
   private _id: string = uuidv4();
   private _end: boolean = false;
-  private _meta: any;
+  private _meta: { projectId: string };
   
-  constructor(options:{ name: string; meta: any }) {
+  constructor(options:{ name: string; meta: { projectId: string } }) {
     this._name = options.name;
     this._meta = options.meta;
   }

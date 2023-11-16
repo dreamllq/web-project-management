@@ -1,30 +1,32 @@
 import { Storage } from '../services/storage';
-import { Project } from './project.type';
+import { Project } from '../models/project';
 import { v4 as uuidv4 } from 'uuid';
 
 let _instance: ProjectEntity | null = null;
+const _flag = Symbol();
 
 export class ProjectEntity {
   private _projects: Project[] = [];
   private _storage: Storage;
 
-  constructor() {
+  constructor(flag: typeof _flag) {
+    if (flag !== _flag) throw new Error('请使用 getInstance 获取实例');
     this._storage = new Storage('base', 'project');  
     this._projects = [];
   }
 
   static getInstance(): ProjectEntity {
     if (_instance === null) {
-      _instance = new ProjectEntity();
+      _instance = new ProjectEntity(_flag);
     }
     return _instance;
   }
 
   async init() {
     await this._storage.init();
-    const data: Project[] = await this._storage.get();
+    const data: any[] = await this._storage.get();
     if (data) {
-      this._projects = data;
+      this._projects = data.map(item => new Project(item));
     }
   }
 
@@ -42,16 +44,12 @@ export class ProjectEntity {
   }
 
   async add(project: { name: string; gitCloneUrl: string; productId: string }) {
-    const urlArr = project.gitCloneUrl.split('/');
-    const gitName = urlArr[urlArr.length - 1].replace(/(.*)\.+.*/g, '$1');
-
-    this._projects.push({
+    this._projects.push(new Project({
       id: uuidv4(),
       name: project.name,
       gitCloneUrl: project.gitCloneUrl,
-      productId: project.productId,
-      folderName: `${project.name}(${gitName})`
-    });
+      productId: project.productId
+    }));
     await this._storage.set(this._projects);
   }
 

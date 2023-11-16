@@ -1,30 +1,31 @@
 import { Storage } from '../services/storage';
-import { Product } from './product.type';
+import { Product } from '../models/product';
 import { v4 as uuidv4 } from 'uuid';
 
 let _instance: ProductEntity | null = null;
-
+const _flag = Symbol();
 export class ProductEntity {
   private _products: Product[] = [];
   private _storage: Storage;
 
-  constructor() {
+  constructor(flag: typeof _flag) {
+    if (flag !== _flag) throw new Error('请使用 getInstance 获取实例');
     this._storage = new Storage('base', 'product');  
     this._products = [];
   }
 
   static getInstance(): ProductEntity {
     if (_instance === null) {
-      _instance = new ProductEntity();
+      _instance = new ProductEntity(_flag);
     }
     return _instance;
   }
 
   async init() {
     await this._storage.init();
-    const data: Product[] = await this._storage.get();
+    const data: any[] = await this._storage.get();
     if (data) {
-      this._products = data;
+      this._products = data.map(item => new Product(item));
     }
   }
 
@@ -42,10 +43,10 @@ export class ProductEntity {
   }
 
   async add(product: { name: string }) {
-    this._products.push({
+    this._products.push(new Product({
       id: uuidv4(),
       name: product.name
-    });
+    }));
     await this._storage.set(this._products);
   }
 
