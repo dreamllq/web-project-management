@@ -55,6 +55,12 @@
                   @click='onVscodeOpened(row)'>
                   <i class='iconfont icon-vscode' />
                 </el-button>
+                <el-button
+                  v-if='row.hasCloned'
+                  :icon='Setting'
+                  link
+                  type='primary'
+                  @click='onSetting(row)' />
               </template>
             </el-table-column>
           </el-table>
@@ -63,6 +69,7 @@
     </template>
   </auto-height-wrapper>
   <project-edit-dialog ref='projectEditDialogRef' @success='onEditSuccess' />
+  <project-setting-dialog ref='projectSettingDialogRef' />
 </template>
 
 <script setup lang="ts">
@@ -71,14 +78,16 @@ import { AutoHeightWrapper } from 'lc-vue-auto-height-wrapper';
 import { computed, ref, watch } from 'vue';
 import api from '@/services/api';
 import { useProductManagement } from '@/state/product-management';
-import { Edit, Delete, Download, FolderOpened, Loading } from '@element-plus/icons-vue';
+import { Edit, Delete, Download, FolderOpened, Loading, Setting } from '@element-plus/icons-vue';
 import { ElMessageBox } from 'element-plus';
 import ProjectEditDialog from '../project-info/edit-dialog.vue';
 import { useRouter } from 'vue-router';
 import { useTaskTerminal } from '@/state/product-management/task-terminal';
+import ProjectSettingDialog from '../project-setting/index.vue';
 
 const pagination = ref<InstanceType<typeof AutoPagination>>();
 const projectEditDialogRef = ref<InstanceType<typeof ProjectEditDialog>>();
+const projectSettingDialogRef = ref<InstanceType<typeof ProjectSettingDialog>>();
 
 const taskIdMap = ref<Record<string, string>>({});
 
@@ -137,6 +146,10 @@ const onFolderOpened = async (row: { id: string }) => {
 
 const onVscodeOpened = async (row: { id: string }) => {
   api.project.openVscodeProject({ id: row.id });
+};
+
+const onSetting = async (row: { id: string }) => {
+  projectSettingDialogRef.value!.show(row.id);
 };
 
 const onEditSuccess = () => {

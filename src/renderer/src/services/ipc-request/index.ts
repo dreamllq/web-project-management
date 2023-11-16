@@ -15,6 +15,7 @@ export default async (url: string, body?: Record<string, any>) => {
   } else {
     ElMessage.error(res.msg);
     const e = new Error(res.msg);
+    // @ts-ignore
     e.code = res.status;
     throw e;
   }
