@@ -25,9 +25,14 @@ export const useTaskTerminal = createGlobalState(() => {
     });
   };
 
+  const remove = (id: string) => {
+    delete taskOutMap.value[id];
+  };
+
   return {
     taskOutMap,
     start,
+    remove,
     selectedTaskId
   };
 });

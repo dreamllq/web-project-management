@@ -9,7 +9,20 @@
         <template #default='{data, indexMethod}'>
           <el-table :data='data' border :height='size.height'>
             <el-table-column type='index' :index='indexMethod' />
-            <el-table-column prop='name' label='项目名' />
+            <el-table-column prop='name' label='项目名'>
+              <template #default='{row}'>
+                <el-button
+                  v-if='projectStatus[row.id]'
+                  link
+                  type='primary'
+                  @click='onJumpTerminal(row)'>
+                  <el-icon class='is-loading'>
+                    <loading />
+                  </el-icon>
+                </el-button>
+                {{ row.name }}
+              </template>
+            </el-table-column>
             <el-table-column prop='gitCloneUrl' label='git克隆地址' show-overflow-tooltip />
             <el-table-column label='操作'>
               <template #default='{row}'>
@@ -55,18 +68,31 @@
 <script setup lang="ts">
 import { AutoPagination } from 'lc-vue-auto-pagination';
 import { AutoHeightWrapper } from 'lc-vue-auto-height-wrapper';
-import { ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import api from '@/services/api';
 import { useProductManagement } from '@/state/product-management';
-import { Edit, Delete, Download, FolderOpened } from '@element-plus/icons-vue';
+import { Edit, Delete, Download, FolderOpened, Loading } from '@element-plus/icons-vue';
 import { ElMessageBox } from 'element-plus';
 import ProjectEditDialog from '../project-info/edit-dialog.vue';
 import { useRouter } from 'vue-router';
+import { useTaskTerminal } from '@/state/product-management/task-terminal';
 
 const pagination = ref<InstanceType<typeof AutoPagination>>();
 const projectEditDialogRef = ref<InstanceType<typeof ProjectEditDialog>>();
 
+const taskIdMap = ref<Record<string, string>>({});
+
 const { selectedProductId } = useProductManagement();
+const { taskOutMap } = useTaskTerminal();
+
+const projectStatus = computed(() => Object.keys(taskOutMap.value).map(key => taskOutMap.value[key]).filter(item => item.end !== true).reduce((acc, item) => {
+  acc[item.meta.projectId] = true;
+  return acc;
+}, {}));
+
+watch(() => projectStatus.value, () => {
+  refresh();
+});
 
 const router = useRouter();
 
@@ -95,9 +121,13 @@ const onDelete = async (row: { id: string }) => {
 const onClone = async (row: { id: string }) => {
   await ElMessageBox.confirm('确认克隆此项目吗？', '确认');
   const res = await api.project.cloneProject({ id: row.id });
+  taskIdMap.value[row.id] = res.taskId;
+};
+
+const onJumpTerminal = (row:{ id: string }) => {
   router.push({
     name: 'task-terminal',
-    query: { id: res.taskId } 
+    query: { id: taskIdMap.value[row.id] } 
   });
 };
 

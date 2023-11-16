@@ -79,10 +79,7 @@ export default () => {
 
   ipcMain.handle('/open-folder/project', async (_, data:{ id: string }) => {
     const project = await ProjectEntity.getInstance().getOne(data.id);
-    const product = await ProductEntity.getInstance().getOne(project!.productId);
-  
     const folderPath = await project!.getFolderPath();
-
     const hasCloned = await project!.isGitCloned();
 
     if (hasCloned) {
