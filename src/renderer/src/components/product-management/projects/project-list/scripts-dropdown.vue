@@ -22,7 +22,6 @@
 import { PropType, onMounted, ref } from 'vue';
 import { VideoPlay } from '@element-plus/icons-vue';
 import api from '@/services/api';
-import { inputEmits } from 'element-plus';
 
 const props = defineProps({
   row: {

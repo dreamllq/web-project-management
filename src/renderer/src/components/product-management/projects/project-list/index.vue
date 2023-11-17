@@ -80,7 +80,7 @@ import { AutoHeightWrapper } from 'lc-vue-auto-height-wrapper';
 import { computed, ref, watch } from 'vue';
 import api from '@/services/api';
 import { useProductManagement } from '@/state/product-management';
-import { Edit, Delete, Download, FolderOpened, Loading, Setting, VideoPlay } from '@element-plus/icons-vue';
+import { Edit, Delete, Download, FolderOpened, Loading } from '@element-plus/icons-vue';
 import { ElMessageBox } from 'element-plus';
 import ProjectEditDialog from '../project-info/edit-dialog.vue';
 import { useRouter } from 'vue-router';
@@ -154,9 +154,6 @@ const onVscodeOpened = async (row: { id: string }) => {
   api.project.openVscodeProject({ id: row.id });
 };
 
-const onSetting = async (row: { id: string }) => {
-  projectSettingDialogRef.value!.show(row.id);
-};
 
 const onEditSuccess = () => {
   refresh();
