@@ -32,12 +32,9 @@ onMounted(() => {
 
 const record = computed(() => (selectedTaskId.value && taskOutMap.value[selectedTaskId.value!]) ? taskOutMap.value[selectedTaskId.value!].record : []);
 
-watch(() => record, () => {
+watch(() => record, async () => {
   xterm?.clear();
-  // record.value.forEach(item => {
-  //   xterm.writeln(item.data);
-  // });
-  xterm?.write(record.value.reduce((acc, item) => acc + item.data, ''));
+  xterm?.write(record.value.reduce((acc, item) => acc + item.data, '') + '\n');
 }, { deep: true });
 
 

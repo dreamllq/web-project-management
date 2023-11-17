@@ -136,7 +136,7 @@ export default () => {
 
     if (data.script.type === 'npm') {
       const npmScripts = ['install'];
-      task.exec('npm', npmScripts.includes(data.script.script) ? [data.script.script] : ['run', data.script.script], { cwd: folderPath });
+      task.exec(process.platform === 'win32' ? 'npm.cmd' : 'npm', npmScripts.includes(data.script.script) ? [data.script.script] : ['run', data.script.script], { cwd: folderPath });
     }
 
     const response = new IpcResponse();
