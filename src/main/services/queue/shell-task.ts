@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
-import { StdioOptions, spawn } from 'child_process';
+import { ChildProcess, StdioOptions, spawn } from 'child_process';
 import mainWindowService from '../main-window';
+
 
 export class ShellTask {
   private _name: string = '';
@@ -8,10 +9,17 @@ export class ShellTask {
   private _id: string = uuidv4();
   private _end: boolean = true;
   private _meta: { projectId: string };
+  private _shellSpawn?: ChildProcess = undefined;
+  private _killed: boolean = false;
   
   constructor(options:{ name: string; meta: { projectId: string } }) {
     this._name = options.name;
     this._meta = options.meta;
+
+    process.on('exit', () => {
+      this.kill();
+      this._killed = true;
+    });
   }
 
   get id() {
@@ -28,9 +36,9 @@ export class ShellTask {
       this._record.push(d);
       this.notify(d);
 
-      const shellSpawn = spawn(shell, args, options);
+      this._shellSpawn = spawn(shell, args, options);
 
-      shellSpawn.stdout?.on('data', (data) => {
+      this._shellSpawn.stdout?.on('data', (data) => {
         console.log(`stdout: ${data}`);
         const d = {
           id: uuidv4(),
@@ -40,7 +48,7 @@ export class ShellTask {
         this.notify(d);
       });
 
-      shellSpawn.stderr?.on('data', (data) => {
+      this._shellSpawn.stderr?.on('data', (data) => {
         console.error(`stderr: ${data}`);
         const d = {
           id: uuidv4(),
@@ -50,11 +58,11 @@ export class ShellTask {
         this.notify(d);
       });
 
-      shellSpawn.on('message', (message) => {
+      this._shellSpawn.on('message', (message) => {
         console.log('message', message);
       });
 
-      shellSpawn.on('close', (code) => {
+      this._shellSpawn.on('close', (code) => {
         this._end = true;
         console.log(`child process exited with code ${code}`);
         const d = {
@@ -72,7 +80,12 @@ export class ShellTask {
     });
   }
 
+  kill() {
+    this._shellSpawn?.kill();
+  }
+
   notify(data: { id: string; data: string }) {
+    if (this._killed) return;
     mainWindowService.get()!.webContents.send('/notify/task/shell', {
       id: this._id,
       data: data,

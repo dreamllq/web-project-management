@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "15838531",
+      "name": "stop",
+      "font_class": "stop",
+      "unicode": "e67f",
+      "unicode_decimal": 59007
+    },
+    {
       "icon_id": "13304144",
       "name": "vscode",
       "font_class": "vscode",

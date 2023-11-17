@@ -12,7 +12,7 @@ import { computed } from 'vue';
 
 const { taskOutMap, selectedTaskId } = useTaskTerminal();
 
-const record = computed(() => selectedTaskId.value ? taskOutMap.value[selectedTaskId.value!].record : []);
+const record = computed(() => (selectedTaskId.value && taskOutMap.value[selectedTaskId.value!]) ? taskOutMap.value[selectedTaskId.value!].record : []);
 </script>
 
 <style scoped lang="scss">
