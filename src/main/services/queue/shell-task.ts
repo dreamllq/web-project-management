@@ -1,7 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
-import { ChildProcess, StdioOptions, spawn } from 'child_process';
+import { ChildProcess, StdioOptions, spawn, exec } from 'child_process';
 import mainWindowService from '../main-window';
-
 
 export class ShellTask {
   private _name: string = '';
@@ -16,12 +15,20 @@ export class ShellTask {
     this._name = options.name;
     this._meta = options.meta;
 
-    process.on('exit', () => {
-      this.kill();
-      this._killed = true;
-    });
-  }
+    // if (process.platform === 'darwin') {
 
+  //   process.on('exit', () => {
+  //     this.kill();
+  //     this._killed = true;
+  //   });
+  // }else{
+  //   app.on('window-all-closed', () => {
+  //     console.log('window-all-closed');
+  //     this.kill();
+  //     this._killed = true;
+  //   });
+  // }
+  }
   get id() {
     return this._id;
   }
@@ -62,26 +69,67 @@ export class ShellTask {
         console.log('message', message);
       });
 
-      this._shellSpawn.on('close', (code) => {
-        this._end = true;
-        console.log(`child process exited with code ${code}`);
-        const d = {
-          id: uuidv4(),
-          data: `child process exited with code ${code}`
-        };
-        this._record.push(d);
-        this.notify(d);
-        if (code === 0) {
-          resolve(code);
-        } else (
-          reject(code)
-        );
-      });
+      
+      if (process.platform === 'win32') {
+        this._shellSpawn.on('exit', (code) => {
+          this._end = true;
+          console.log(`child process exited with code ${code}`);
+          const d = {
+            id: uuidv4(),
+            data: `child process exited with code ${code}`
+          };
+          this._record.push(d);
+          this.notify(d);
+          if (code === 0) {
+            resolve(code);
+          } else (
+            reject(code)
+          );
+        });
+      } else {
+        this._shellSpawn.on('close', (code) => {
+          this._end = true;
+          console.log(`child process exited with code ${code}`);
+          const d = {
+            id: uuidv4(),
+            data: `child process exited with code ${code}`
+          };
+          this._record.push(d);
+          this.notify(d);
+          if (code === 0) {
+            resolve(code);
+          } else (
+            reject(code)
+          );
+        });
+      }
     });
   }
 
   kill() {
-    this._shellSpawn?.kill();
+    return new Promise((resolve, reject) => {
+      if (this._end) return resolve(null);
+      if (process.platform === 'win32') {
+        console.log(`taskkill /PID ${this._shellSpawn?.pid} /T /F`);
+        this._killed = true;
+        exec(`taskkill /PID ${this._shellSpawn?.pid} /T /F`, (error, stdout, stderr) => {
+          console.log('taskkill stdout: ', stdout);
+          console.log('taskkill stderr: ', stderr);
+          
+          if (error) {
+            console.error(error);
+            reject(error);
+          } else {
+            resolve(null);
+          }
+        });
+      } else {
+        this._shellSpawn?.kill();
+        this._killed === true;
+        resolve(null);
+      }
+    });
+
   }
 
   notify(data: { id: string; data: string }) {

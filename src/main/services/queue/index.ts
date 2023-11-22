@@ -47,4 +47,8 @@ export class Queue {
       })
     });
   }
+
+  async kill(){
+    await Promise.all(this._shellQueue.map(task=>task.kill()));
+  }
 }
