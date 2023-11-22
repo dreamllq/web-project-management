@@ -78,11 +78,11 @@ app.on('window-all-closed', async () => {
   }
 });
 
-app.on('will-quit', async(event)=>{
-  event.preventDefault()
+app.on('will-quit', async(event) => {
+  event.preventDefault();
   await Queue.getInstance().kill();
-  app.exit(0)
-})
+  app.exit(0);
+});
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.

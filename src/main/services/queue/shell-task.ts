@@ -15,19 +15,9 @@ export class ShellTask {
     this._name = options.name;
     this._meta = options.meta;
 
-    // if (process.platform === 'darwin') {
-
-  //   process.on('exit', () => {
-  //     this.kill();
-  //     this._killed = true;
-  //   });
-  // }else{
-  //   app.on('window-all-closed', () => {
-  //     console.log('window-all-closed');
-  //     this.kill();
-  //     this._killed = true;
-  //   });
-  // }
+    process.on('exit', () => {
+      this._killed = true;
+    });
   }
   get id() {
     return this._id;

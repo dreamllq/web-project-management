@@ -19,8 +19,8 @@
                   <el-icon class='is-loading'>
                     <loading />
                   </el-icon>
+                  <span style='margin-left: 4px;'>{{ row.name }}</span>
                 </el-button>
-                {{ row.name }}
               </template>
             </el-table-column>
             <el-table-column prop='gitCloneUrl' label='git克隆地址' show-overflow-tooltip />
@@ -104,7 +104,7 @@ const projectStatus = computed(() => runningTaskList.value.reduce((acc, item) =>
   return acc;
 }, {}));
 
-watch(() => projectStatus.value, () => {
+watch(() => JSON.stringify(projectStatus.value), () => {
   refresh();
 });
 
