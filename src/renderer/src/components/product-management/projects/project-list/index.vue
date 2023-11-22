@@ -62,7 +62,7 @@
                   type='primary'
                   @click='onSetting(row)' /> -->
                   
-                <scripts-dropdown :row='row' />
+                <scripts-dropdown v-if='row.hasCloned' :row='row' />
               </template>
             </el-table-column>
           </el-table>

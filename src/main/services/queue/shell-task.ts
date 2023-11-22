@@ -31,7 +31,7 @@ export class ShellTask {
     return new Promise((resolve, reject) => {
       const d = {
         id: uuidv4(),
-        data: `${shell} ${args.join(' ')}`
+        data: `${shell} ${args.join(' ')}\n`
       };
       this._record.push(d);
       this.notify(d);
