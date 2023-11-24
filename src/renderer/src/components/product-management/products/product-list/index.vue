@@ -7,16 +7,13 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import api from '@/services/api';
-// import { useProducts } from '@/state/product-management/products';
+import { onMounted } from 'vue';
+import { useProductManagement } from '@/state/product-management/index';
 import ProductItem from './product-item.vue';
-import { Product } from '@/type';
-// const { products } = useProducts();
 
-const products = ref<Product[]>([]);
+const { products, loadProducts } = useProductManagement();
 onMounted(async () => {
-  products.value = await api.product.getProducts();
+  loadProducts();
 });
 
 const onEditSuccess = () => {
@@ -28,7 +25,7 @@ const onDeleteSuccess = () => {
 };
 
 const refresh = async () => {
-  products.value = await api.product.getProducts();
+  loadProducts();
 };
 
 defineExpose({ refresh });
